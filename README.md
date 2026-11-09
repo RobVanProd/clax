@@ -13,6 +13,14 @@ Six expeditions across three districts:
 | 5 | The Admission Gates | carnival | The Head Barker |
 | 6 | Pressure Trench Carnival | carnival | The Refund Department |
 
+## Source of truth
+
+`index.html` **is** the source. Comments inside it mention `src/game/`, `tools/build.js`, `docs/LEVEL_DESIGN.md` and
+`tools/cut_rig.py`; none of those files exist in this repository, and the only other copy of the game (the build 0.1
+package) is an older single-file build with a different level format and none of the v0.2 movement. Edit `index.html`
+directly. The file is line-oriented: line 14 is the embedded art (1.8 MB, do not open it in an editor that reflows),
+everything after it is ordinary readable JavaScript in four `<script>` blocks: physics, world data, audio, game.
+
 ## Checks
 
 The physics and level data inside `index.html` are pure (no DOM), so the tools load them straight from the built file.
