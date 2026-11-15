@@ -486,7 +486,7 @@ function builder(index, cols, rows) {
   const g = Array.from({ length: rows }, () => Array(cols).fill(' '));
   const bk = Array.from({ length: rows }, () => Array(cols).fill(' '));
   const st = stages[index], bio = biomes[st.biome];
-  const L = { index, biome: bio, biomeIndex: st.biome, art: st.art, name: st.name || bio.name, subtitle: st.subtitle || bio.subtitle, tag: String(index + 1).padStart(2, '0') + ' / ' + (st.tag || bio.tag.slice(5)), cols, rows, width: cols * TS, height: rows * TS, grid: g, back: bk, movers: [], hooks: [], springs: [],
+  const L = { index, biome: bio, biomeIndex: st.biome, art: st.art, fog: st.fog || bio.fog, name: st.name || bio.name, subtitle: st.subtitle || bio.subtitle, tag: String(index + 1).padStart(2, '0') + ' / ' + (st.tag || bio.tag.slice(5)), cols, rows, width: cols * TS, height: rows * TS, grid: g, back: bk, movers: [], hooks: [], springs: [],
     enemies: [], pickups: [], npcs: [], vents: [], crates: [], checkpoints: [], signs: [], areas: [], radio: [], hints: [], deco: [], boss: null, exit: null, start: null };
   let id = 0;
   /* Anything that stands on the ground is resolved in done(), once ALL terrain exists, so a block added after a
@@ -921,10 +921,10 @@ function gates() {
 /* Campaign order. biome/boss index into the tables above; name/subtitle/tag override the biome's for interludes. */
 const stages = [
   { fn: yard, art: 'yard', biome: 0, boss: 0, card: ['SALVAGE DISTRICT', 'Sunken<br>Rescue Yard', 'Scrapped lifeboats, a ship that never sailed, and the world\'s least authorized departure.'] },
-  { fn: canal, art: 'canal', biome: 0, boss: 3, name: 'The Duty Canal', subtitle: 'NOTHING TO DECLARE', tag: 'CANAL CUSTOMS', card: ['CANAL CUSTOMS', 'The Duty<br>Canal', 'Runaway barges, an impound shed, and a quartermaster who inspects everything he steals.'] },
+  { fn: canal, art: 'canal', fog: 'rgba(26,46,34,', biome: 0, boss: 3, name: 'The Duty Canal', subtitle: 'NOTHING TO DECLARE', tag: 'CANAL CUSTOMS', card: ['CANAL CUSTOMS', 'The Duty<br>Canal', 'Runaway barges, an impound shed, and a quartermaster who inspects everything he steals.'] },
   { fn: fortress, art: 'fortress', biome: 1, boss: 1, card: ['BUREAU TERRITORY', 'The Inflatable<br>Fortress', 'Bounce the bailey, climb the Tower of Forms, puncture the management.'] },
-  { fn: archive, art: 'archive', biome: 1, boss: 4, name: 'The Unrecorded Archive', subtitle: 'NOTHING EVER HAPPENED', tag: 'BUREAU BASEMENT', card: ['BUREAU BASEMENT', 'The Unrecorded<br>Archive', 'Nine years of nothing happening, filed downward. Fetch the fine print.'] },
-  { fn: gates, art: 'gates', biome: 2, boss: 5, name: 'The Admission Gates', subtitle: 'FREE TO ENTER', tag: 'TRENCH ADMISSIONS', card: ['TRENCH ADMISSIONS', 'The Admission<br>Gates', 'Three floors of rope line, a wheel for the short, and a fish with a megaphone.'] },
+  { fn: archive, art: 'archive', fog: 'rgba(44,30,46,', biome: 1, boss: 4, name: 'The Unrecorded Archive', subtitle: 'NOTHING EVER HAPPENED', tag: 'BUREAU BASEMENT', card: ['BUREAU BASEMENT', 'The Unrecorded<br>Archive', 'Nine years of nothing happening, filed downward. Fetch the fine print.'] },
+  { fn: gates, art: 'gates', fog: 'rgba(20,28,54,', biome: 2, boss: 5, name: 'The Admission Gates', subtitle: 'FREE TO ENTER', tag: 'TRENCH ADMISSIONS', card: ['TRENCH ADMISSIONS', 'The Admission<br>Gates', 'Three floors of rope line, a wheel for the short, and a fish with a megaphone.'] },
   { fn: carnival, art: 'carnival', biome: 2, boss: 2, card: ['THE LAST RELIEF VALVE', 'Pressure Trench<br>Carnival', 'Ride the coaster into the trench and the big wheel back out. Cancellation is about to get loud.'] }];
 
 function make(index) {
@@ -955,6 +955,11 @@ note(s,t,d){if(!this.enabled||!this.music)return;const bus=this.musicBus,bar=Mat
 const W = 1280, H = 720, STEP = 1 / 120, DB = window.CLAX_WORLD, P = window.CLAX_PHYS, TS = P.TS, RIG = window.CLAX_RIG;
 const screen_ = window.screen, canvas = document.getElementById('game'), ctx = canvas.getContext('2d', { alpha: false }), ui = document.getElementById('interface'), $ = s => document.querySelector(s), images = {};
 await Promise.all(Object.entries(CLAX_ASSETS).map(([k, src]) => new Promise(ok => { const im = new Image(); im.onload = () => { images[k] = im; ok(); }; im.onerror = () => { console.warn('Missing art', k); ok(); }; im.src = src; })));
+/* Painted parallax backdrops live next to index.html (assets/backdrops/) and load in the background, so the first load
+   stays small. Until one arrives, or if the game file is opened on its own, the embedded district painting is used. */
+const BACKDROPS = { yard: ['mid'], canal: ['far', 'mid'], fortress: ['far', 'mid'], archive: ['far', 'mid'], gates: ['far', 'mid'], carnival: ['far'] };
+const backdropUrl = (art, layer) => `assets/backdrops/${art}_${layer}.webp`;
+window.CLAX_BACKDROPS = Promise.all(Object.entries(BACKDROPS).flatMap(([art, layers]) => layers.map(layer => new Promise(ok => { const im = new Image(); im.onload = () => { images[`bg_${art}_${layer}`] = im; ok(true); }; im.onerror = () => ok(false); im.src = backdropUrl(art, layer); }))));
 let seed = 7391; const rand = () => { seed = seed * 16807 % 2147483647; return (seed - 1) / 2147483646; };
 const clamp = (x, a, b) => Math.max(a, Math.min(b, x)), lerp = (a, b, t) => a + (b - a) * t, approach = (a, b, d) => a < b ? Math.min(a + d, b) : Math.max(a - d, b),
   ease = (a, b, r, dt) => lerp(a, b, 1 - Math.exp(-r * dt)), mod = (x, m) => (x % m + m) % m, hash = (a, b) => { let h = (a * 374761393 + b * 668265263) | 0; h = (h ^ (h >>> 13)) * 1274126177 | 0; return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
@@ -1072,7 +1077,7 @@ $('#hero-render').src = CLAX_ASSETS.clax_front; $('#start').onclick = () => { go
 $('#open-guide').onclick = () => { G.mode = 'guide'; screen('guide-screen'); }; $('#open-settings').onclick = () => { G.mode = 'settings'; screen('settings-screen'); };
 document.querySelectorAll('[data-back]').forEach(b => b.onclick = showTitle);
 $('.stage-grid').classList.add('six'); $('.stage-grid').innerHTML = DB.stages.map((st, i) => `<button class="stage-card" data-stage="${i}"><span class="number">${String(i + 1).padStart(2, '0')}</span><span class="eyebrow">${st.card[0]}</span><h3>${st.card[1]}</h3><span class="descriptor">${st.card[2]}</span><span class="launch">ENTER →</span></button>`).join('');
-document.querySelectorAll('[data-stage]').forEach(b => { const i = +b.dataset.stage; b.style.backgroundImage = `linear-gradient(0deg,rgba(5,17,25,.96),rgba(5,17,25,.05)),url('${CLAX_ASSETS[DB.biomes[DB.stages[i].biome].id + '_background']}')`; b.style.backgroundPosition = ['center 30%', 'center 75%'][i % 2]; b.onclick = () => { goBig(); start(i); }; });
+document.querySelectorAll('[data-stage]').forEach(b => { const i = +b.dataset.stage; b.style.backgroundImage = `linear-gradient(0deg,rgba(5,17,25,.96),rgba(5,17,25,.05)),${BACKDROPS[DB.stages[i].art]?.includes('far') ? `url('${backdropUrl(DB.stages[i].art, 'far')}'),` : ''}url('${CLAX_ASSETS[DB.biomes[DB.stages[i].biome].id + '_background']}')`; b.style.backgroundPosition = ['center 30%', 'center 75%'][i % 2]; b.onclick = () => { goBig(); start(i); }; });
 $('#resume').onclick = resume; $('#restart').onclick = () => start(G.level.index, true); $('#quit').onclick = showTitle; $('#next-stage').onclick = continueCampaign; $('#replay').onclick = () => start(G.level.index, true);
 $('#dialogue-next').onclick = nextDialogue; $('#dialogue-skip').onclick = skipDialogue; document.addEventListener('click', e => { if (G.mode === 'dialogue' && !e.target.closest('button')) nextDialogue(); }); $('#pause-button').onclick = pause; $('#fullscreen-button').onclick = fullscreen;
 for (const k of ['mute', 'music', 'shake', 'assist']) { const el = $('#setting-' + k); el.checked = save.settings[k]; el.onchange = () => { save.settings[k] = el.checked; audio.setMute(save.settings.mute); audio.setMusic(save.settings.music); persist(); }; }
@@ -1337,14 +1342,17 @@ const rgba = (h, a) => { const A = hex(h); return `rgba(${A[0]},${A[1]},${A[2]},
 const motes = Array.from({ length: 46 }, () => ({ x: rand() * W, y: rand() * H, r: rand() * 3 + .6, s: rand() * .7 + .25 }));
 
 function backdrop(cx, cy, t) {
-  const L = G.level, b = L.biome, paint = images[b.id + '_background'];
-  // the painting, full strength, slow parallax on both axes
-  const ph = H * 1.2, pw = ph * paint.width / paint.height, oy = -clamp(cy / Math.max(1, L.height - H), 0, 1) * (ph - H), off = mod(cx * .1, pw * 2);
-  for (let i = -2; i < 4; i++) { const x = i * pw - off; if (x > W || x + pw < 0) continue; ctx.save(); if (mod(i, 2) === 1) { ctx.translate(x + pw, oy); ctx.scale(-1, 1); ctx.drawImage(paint, 0, 0, pw + 1, ph); } else ctx.drawImage(paint, x, oy, pw + 1, ph); ctx.restore(); }
+  const L = G.level, b = L.biome, far = images['bg_' + L.art + '_far'], paint = far || images[b.id + '_background'], mid = images['bg_' + L.art + '_mid'];
+  // far layer: full strength, slow parallax on both axes. Painted layers tile seamlessly; the old paintings are mirror-tiled.
+  const ph = H * 1.2, pw = ph * paint.width / paint.height, ty = clamp(cy / Math.max(1, L.height - H), 0, 1), oy = -ty * (ph - H);
+  if (far) { const off = mod(cx * .1, pw); for (let i = -1; i < 3; i++) { const x = i * pw - off; if (x < W && x + pw > 0) ctx.drawImage(paint, x, oy, pw + 1, ph); } }
+  else { const off = mod(cx * .1, pw * 2); for (let i = -2; i < 4; i++) { const x = i * pw - off; if (x > W || x + pw < 0) continue; ctx.save(); if (mod(i, 2) === 1) { ctx.translate(x + pw, oy); ctx.scale(-1, 1); ctx.drawImage(paint, 0, 0, pw + 1, ph); } else ctx.drawImage(paint, x, oy, pw + 1, ph); ctx.restore(); } }
+  // near layer: a band of silhouettes along the bottom, faster parallax, sinking out of view as the camera climbs
+  if (mid) { const mw = ph * mid.width / mid.height, my = H - ph + (1 - ty) * 150, off = mod(cx * .32, mw); for (let i = -1; i < 3; i++) { const x = i * mw - off; if (x < W && x + mw > 0) ctx.drawImage(mid, x, my, mw + 1, ph); } }
   // depth haze: only towards the bottom, so the painting keeps its colour
-  let gr = ctx.createLinearGradient(0, H * .35, 0, H); gr.addColorStop(0, b.fog + '0)'); gr.addColorStop(1, b.fog + '.5)'); ctx.fillStyle = gr; ctx.fillRect(0, 0, W, H);
-  if (b.id === 'yard') { ctx.save(); ctx.globalAlpha = .07; ctx.fillStyle = b.accent; for (let i = 0; i < 5; i++) { const x = i * 370 - mod(cx * .07, 370); ctx.beginPath(); ctx.moveTo(x, -30); ctx.lineTo(x + 65, -30); ctx.lineTo(x + 350, 720); ctx.lineTo(x + 170, 720); ctx.closePath(); ctx.fill(); } ctx.restore(); }
-  if (b.id === 'yard') { skyline(cx, cy, t, .22, mix(b.sky[1], b.shadow, .45), .62, 0, 520); skyline(cx, cy, t, .42, mix(b.sky[1], b.shadow, .8), .9, 3, 640); }
+  let gr = ctx.createLinearGradient(0, H * .35, 0, H); gr.addColorStop(0, L.fog + '0)'); gr.addColorStop(1, L.fog + '.5)'); ctx.fillStyle = gr; ctx.fillRect(0, 0, W, H);
+  if (L.art === 'yard') { ctx.save(); ctx.globalAlpha = .07; ctx.fillStyle = b.accent; for (let i = 0; i < 5; i++) { const x = i * 370 - mod(cx * .07, 370); ctx.beginPath(); ctx.moveTo(x, -30); ctx.lineTo(x + 65, -30); ctx.lineTo(x + 350, 720); ctx.lineTo(x + 170, 720); ctx.closePath(); ctx.fill(); } ctx.restore(); }
+  if (b.id === 'yard' && !mid) { skyline(cx, cy, t, .22, mix(b.sky[1], b.shadow, .45), .62, 0, 520); skyline(cx, cy, t, .42, mix(b.sky[1], b.shadow, .8), .9, 3, 640); }
   for (const s of motes) { ctx.globalAlpha = .14 + s.s * .14; ctx.strokeStyle = b.accent; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(mod(s.x - cx * (.12 + s.s * .1) + Math.sin(t * .3 + s.y) * 13, W), mod(s.y - cy * .1 - t * (8 + s.s * 13), H), s.r, 0, Math.PI * 2); ctx.stroke(); }
   ctx.globalAlpha = 1;
 }

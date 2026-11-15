@@ -15,7 +15,7 @@ Six expeditions across three districts:
 
 ## Source of truth
 
-`index.html` **is** the source. Comments inside it mention `src/game/`, `tools/build.js`, `docs/LEVEL_DESIGN.md` and
+`index.html` **is** the source, plus the painted parallax backdrops in `assets/backdrops/` (`<level>_far.webp`, `<level>_mid.webp`). The game loads those in the background and falls back to the paintings embedded in `index.html` if they are missing, so the single file still runs on its own. Comments inside it mention `src/game/`, `tools/build.js`, `docs/LEVEL_DESIGN.md` and
 `tools/cut_rig.py`; none of those files exist in this repository, and the only other copy of the game (the build 0.1
 package) is an older single-file build with a different level format and none of the v0.2 movement. Edit `index.html`
 directly. The file is line-oriented: line 14 is the embedded art (1.8 MB, do not open it in an editor that reflows),
