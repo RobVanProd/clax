@@ -1,5 +1,5 @@
 {
-  "batch": "1 \u2014 backdrops",
+  "batch": "1\u20132 \u2014 backdrops and materials",
   "reference_branch": "ccr-8256d6e8-u1fjlo",
   "assets": [
     {
@@ -276,6 +276,281 @@
       "upscaled": false,
       "seamless": null,
       "notes": "Annotated contact sheet for review; not a game asset."
+    },
+    {
+      "file": "textures/yard_ground.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "alpha": false,
+      "upscaled": false,
+      "seamless": true,
+      "notes": "Original 2048 px procedural texture; no mirroring. Periodic geometry; 50% offset inspected; 3\u00d73 check JPG is scaled to 700 px per repeated tile. Material is stylized rather than a final hand-painted pass; requires visual review against reference."
+    },
+    {
+      "file": "textures/yard_ground__tiletest.jpg",
+      "size": [
+        2100,
+        2100
+      ],
+      "alpha": false,
+      "upscaled": false,
+      "seamless": null,
+      "notes": "Downsampled 3\u00d73 seam test; not a runtime texture."
+    },
+    {
+      "file": "textures/yard_wall.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "alpha": false,
+      "upscaled": false,
+      "seamless": true,
+      "notes": "Original 2048 px procedural texture; no mirroring. Periodic geometry; 50% offset inspected; 3\u00d73 check JPG is scaled to 700 px per repeated tile. Material is stylized rather than a final hand-painted pass; requires visual review against reference."
+    },
+    {
+      "file": "textures/yard_wall__tiletest.jpg",
+      "size": [
+        2100,
+        2100
+      ],
+      "alpha": false,
+      "upscaled": false,
+      "seamless": null,
+      "notes": "Downsampled 3\u00d73 seam test; not a runtime texture."
+    },
+    {
+      "file": "textures/canal_ground.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "alpha": false,
+      "upscaled": false,
+      "seamless": true,
+      "notes": "Original 2048 px procedural texture; no mirroring. Periodic geometry; 50% offset inspected; 3\u00d73 check JPG is scaled to 700 px per repeated tile. Material is stylized rather than a final hand-painted pass; requires visual review against reference."
+    },
+    {
+      "file": "textures/canal_ground__tiletest.jpg",
+      "size": [
+        2100,
+        2100
+      ],
+      "alpha": false,
+      "upscaled": false,
+      "seamless": null,
+      "notes": "Downsampled 3\u00d73 seam test; not a runtime texture."
+    },
+    {
+      "file": "textures/canal_wall.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "alpha": false,
+      "upscaled": false,
+      "seamless": true,
+      "notes": "Original 2048 px procedural texture; no mirroring. Periodic geometry; 50% offset inspected; 3\u00d73 check JPG is scaled to 700 px per repeated tile. Material is stylized rather than a final hand-painted pass; requires visual review against reference."
+    },
+    {
+      "file": "textures/canal_wall__tiletest.jpg",
+      "size": [
+        2100,
+        2100
+      ],
+      "alpha": false,
+      "upscaled": false,
+      "seamless": null,
+      "notes": "Downsampled 3\u00d73 seam test; not a runtime texture."
+    },
+    {
+      "file": "textures/fortress_ground.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "alpha": false,
+      "upscaled": false,
+      "seamless": true,
+      "notes": "Original 2048 px procedural texture; no mirroring. Periodic geometry; 50% offset inspected; 3\u00d73 check JPG is scaled to 700 px per repeated tile. Material is stylized rather than a final hand-painted pass; requires visual review against reference."
+    },
+    {
+      "file": "textures/fortress_ground__tiletest.jpg",
+      "size": [
+        2100,
+        2100
+      ],
+      "alpha": false,
+      "upscaled": false,
+      "seamless": null,
+      "notes": "Downsampled 3\u00d73 seam test; not a runtime texture."
+    },
+    {
+      "file": "textures/fortress_wall.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "alpha": false,
+      "upscaled": false,
+      "seamless": true,
+      "notes": "Original 2048 px procedural texture; no mirroring. Periodic geometry; 50% offset inspected; 3\u00d73 check JPG is scaled to 700 px per repeated tile. Material is stylized rather than a final hand-painted pass; requires visual review against reference."
+    },
+    {
+      "file": "textures/fortress_wall__tiletest.jpg",
+      "size": [
+        2100,
+        2100
+      ],
+      "alpha": false,
+      "upscaled": false,
+      "seamless": null,
+      "notes": "Downsampled 3\u00d73 seam test; not a runtime texture."
+    },
+    {
+      "file": "textures/archive_ground.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "alpha": false,
+      "upscaled": false,
+      "seamless": true,
+      "notes": "Original 2048 px procedural texture; no mirroring. Periodic geometry; 50% offset inspected; 3\u00d73 check JPG is scaled to 700 px per repeated tile. Material is stylized rather than a final hand-painted pass; requires visual review against reference."
+    },
+    {
+      "file": "textures/archive_ground__tiletest.jpg",
+      "size": [
+        2100,
+        2100
+      ],
+      "alpha": false,
+      "upscaled": false,
+      "seamless": null,
+      "notes": "Downsampled 3\u00d73 seam test; not a runtime texture."
+    },
+    {
+      "file": "textures/archive_wall.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "alpha": false,
+      "upscaled": false,
+      "seamless": true,
+      "notes": "Original 2048 px procedural texture; no mirroring. Periodic geometry; 50% offset inspected; 3\u00d73 check JPG is scaled to 700 px per repeated tile. Material is stylized rather than a final hand-painted pass; requires visual review against reference."
+    },
+    {
+      "file": "textures/archive_wall__tiletest.jpg",
+      "size": [
+        2100,
+        2100
+      ],
+      "alpha": false,
+      "upscaled": false,
+      "seamless": null,
+      "notes": "Downsampled 3\u00d73 seam test; not a runtime texture."
+    },
+    {
+      "file": "textures/gates_ground.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "alpha": false,
+      "upscaled": false,
+      "seamless": true,
+      "notes": "Original 2048 px procedural texture; no mirroring. Periodic geometry; 50% offset inspected; 3\u00d73 check JPG is scaled to 700 px per repeated tile. Material is stylized rather than a final hand-painted pass; requires visual review against reference."
+    },
+    {
+      "file": "textures/gates_ground__tiletest.jpg",
+      "size": [
+        2100,
+        2100
+      ],
+      "alpha": false,
+      "upscaled": false,
+      "seamless": null,
+      "notes": "Downsampled 3\u00d73 seam test; not a runtime texture."
+    },
+    {
+      "file": "textures/gates_wall.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "alpha": false,
+      "upscaled": false,
+      "seamless": true,
+      "notes": "Original 2048 px procedural texture; no mirroring. Periodic geometry; 50% offset inspected; 3\u00d73 check JPG is scaled to 700 px per repeated tile. Material is stylized rather than a final hand-painted pass; requires visual review against reference."
+    },
+    {
+      "file": "textures/gates_wall__tiletest.jpg",
+      "size": [
+        2100,
+        2100
+      ],
+      "alpha": false,
+      "upscaled": false,
+      "seamless": null,
+      "notes": "Downsampled 3\u00d73 seam test; not a runtime texture."
+    },
+    {
+      "file": "textures/carnival_ground.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "alpha": false,
+      "upscaled": false,
+      "seamless": true,
+      "notes": "Original 2048 px procedural texture; no mirroring. Periodic geometry; 50% offset inspected; 3\u00d73 check JPG is scaled to 700 px per repeated tile. Material is stylized rather than a final hand-painted pass; requires visual review against reference."
+    },
+    {
+      "file": "textures/carnival_ground__tiletest.jpg",
+      "size": [
+        2100,
+        2100
+      ],
+      "alpha": false,
+      "upscaled": false,
+      "seamless": null,
+      "notes": "Downsampled 3\u00d73 seam test; not a runtime texture."
+    },
+    {
+      "file": "textures/carnival_wall.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "alpha": false,
+      "upscaled": false,
+      "seamless": true,
+      "notes": "Original 2048 px procedural texture; no mirroring. Periodic geometry; 50% offset inspected; 3\u00d73 check JPG is scaled to 700 px per repeated tile. Material is stylized rather than a final hand-painted pass; requires visual review against reference."
+    },
+    {
+      "file": "textures/carnival_wall__tiletest.jpg",
+      "size": [
+        2100,
+        2100
+      ],
+      "alpha": false,
+      "upscaled": false,
+      "seamless": null,
+      "notes": "Downsampled 3\u00d73 seam test; not a runtime texture."
+    },
+    {
+      "file": "contact_sheets/textures.jpg",
+      "size": [
+        2400,
+        4515
+      ],
+      "alpha": false,
+      "upscaled": false,
+      "seamless": null,
+      "notes": "Labeled overview for all 12 texture masters."
     }
   ],
   "validation": {
@@ -458,6 +733,80 @@
         0.969
       ],
       "min_top_alpha": 0
+    }
+  },
+  "texture_validation": {
+    "yard_ground": {
+      "lr_edge_mean_rgb": 0.163,
+      "tb_edge_mean_rgb": 0.447,
+      "offset_lr": 0.08,
+      "offset_tb": 1.019
+    },
+    "yard_wall": {
+      "lr_edge_mean_rgb": 0.887,
+      "tb_edge_mean_rgb": 0.138,
+      "offset_lr": 0.14,
+      "offset_tb": 0.237
+    },
+    "canal_ground": {
+      "lr_edge_mean_rgb": 2.773,
+      "tb_edge_mean_rgb": 0.083,
+      "offset_lr": 0.069,
+      "offset_tb": 0.155
+    },
+    "canal_wall": {
+      "lr_edge_mean_rgb": 5.365,
+      "tb_edge_mean_rgb": 0.418,
+      "offset_lr": 5.328,
+      "offset_tb": 0.213
+    },
+    "fortress_ground": {
+      "lr_edge_mean_rgb": 0.712,
+      "tb_edge_mean_rgb": 1.362,
+      "offset_lr": 0.512,
+      "offset_tb": 18.299
+    },
+    "fortress_wall": {
+      "lr_edge_mean_rgb": 0.066,
+      "tb_edge_mean_rgb": 0.049,
+      "offset_lr": 0.072,
+      "offset_tb": 0.123
+    },
+    "archive_ground": {
+      "lr_edge_mean_rgb": 0.096,
+      "tb_edge_mean_rgb": 1.782,
+      "offset_lr": 1.578,
+      "offset_tb": 0.526
+    },
+    "archive_wall": {
+      "lr_edge_mean_rgb": 0.076,
+      "tb_edge_mean_rgb": 0.02,
+      "offset_lr": 7.531,
+      "offset_tb": 0.173
+    },
+    "gates_ground": {
+      "lr_edge_mean_rgb": 2.937,
+      "tb_edge_mean_rgb": 0.071,
+      "offset_lr": 0.932,
+      "offset_tb": 0.423
+    },
+    "gates_wall": {
+      "lr_edge_mean_rgb": 1.366,
+      "tb_edge_mean_rgb": 1.778,
+      "offset_lr": 0.901,
+      "offset_tb": 0.504
+    },
+    "carnival_ground": {
+      "lr_edge_mean_rgb": 1.067,
+      "tb_edge_mean_rgb": 0.392,
+      "offset_lr": 0.074,
+      "offset_tb": 0.427
+    },
+    "carnival_wall": {
+      "lr_edge_mean_rgb": 0.577,
+      "tb_edge_mean_rgb": 0.06,
+      "offset_lr": 0.047,
+      "offset_tb": 0.191
     }
   }
 }
