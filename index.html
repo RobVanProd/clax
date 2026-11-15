@@ -474,11 +474,11 @@ const enemyInfo = {
   puffer: { name: 'Puffer Barker', hp: 3, w: 90, h: 100, speed: 47, kind: 'puffer', score: 175 },
   carnival: { name: 'Ticket Collector', hp: 5, w: 104, h: 121, speed: 64, kind: 'walk', score: 250 } };
 const bosses = [
-  { sprite: 'crab', name: 'FOREMAN CLAMPRIGHT', title: 'Certified to make things worse.', hp: 24, w: 232, h: 202, kind: 'clamp' },
-  { sprite: 'warden', name: 'DIRECTOR DRYDOCK', title: 'There is a form for that explosion.', hp: 34, w: 200, h: 278, kind: 'director' },
-  { sprite: 'carnival', name: 'THE REFUND DEPARTMENT', title: 'Your safety is our recurring revenue.', hp: 42, w: 286, h: 302, kind: 'refund' },
-  { sprite: 'eel', name: 'QUARTERMASTER SLICK', title: 'Everything here is salvage. Including you.', hp: 28, w: 186, h: 258, kind: 'looter' },
-  { sprite: 'guard', name: 'THE HEAD ARCHIVIST', title: 'Your incident has been filed under "never happened".', hp: 36, w: 214, h: 258, kind: 'archivist' },
+  { sprite: 'crab', art: 'clampright', name: 'FOREMAN CLAMPRIGHT', title: 'Certified to make things worse.', hp: 24, w: 232, h: 202, kind: 'clamp' },
+  { sprite: 'warden', art: 'drydock', name: 'DIRECTOR DRYDOCK', title: 'There is a form for that explosion.', hp: 34, w: 200, h: 278, kind: 'director' },
+  { sprite: 'carnival', art: 'refund', name: 'THE REFUND DEPARTMENT', title: 'Your safety is our recurring revenue.', hp: 42, w: 286, h: 302, kind: 'refund' },
+  { sprite: 'eel', art: 'slick', name: 'QUARTERMASTER SLICK', title: 'Everything here is salvage. Including you.', hp: 28, w: 186, h: 258, kind: 'looter' },
+  { sprite: 'guard', art: 'archivist', name: 'THE HEAD ARCHIVIST', title: 'Your incident has been filed under "never happened".', hp: 36, w: 214, h: 258, kind: 'archivist' },
   { sprite: 'puffer', name: 'THE HEAD BARKER', title: 'Step right up. Stay right down.', hp: 32, w: 226, h: 254, kind: 'barker', fly: true }];
 
 /* ------------------------------------------------------------------ level builder */
@@ -957,8 +957,10 @@ const screen_ = window.screen, canvas = document.getElementById('game'), ctx = c
 await Promise.all(Object.entries(CLAX_ASSETS).map(([k, src]) => new Promise(ok => { const im = new Image(); im.onload = () => { images[k] = im; ok(); }; im.onerror = () => { console.warn('Missing art', k); ok(); }; im.src = src; })));
 /* Painted parallax backdrops live next to index.html (assets/backdrops/) and load in the background, so the first load
    stays small. Until one arrives, or if the game file is opened on its own, the embedded district painting is used. */
-const BACKDROPS = { yard: ['mid'], canal: ['far', 'mid'], fortress: ['far', 'mid'], archive: ['far', 'mid'], gates: ['far', 'mid'], carnival: ['far'] };
+const BACKDROPS = { yard: ['far', 'mid'], canal: ['far', 'mid'], fortress: ['far', 'mid'], archive: ['far', 'mid'], gates: ['far', 'mid'], carnival: ['far', 'mid'] };
 const backdropUrl = (art, layer) => `assets/backdrops/${art}_${layer}.webp`;
+/* Painted boss art, same arrangement: assets/bosses/<art>.webp, falling back to the enlarged enemy sprite. */
+window.CLAX_BOSS_ART = Promise.all(DB.bosses.filter(b => b.art).map(b => new Promise(ok => { const im = new Image(); im.onload = () => { images['boss_' + b.art] = im; ok(true); }; im.onerror = () => ok(false); im.src = `assets/bosses/${b.art}.webp`; })));
 window.CLAX_BACKDROPS = Promise.all(Object.entries(BACKDROPS).flatMap(([art, layers]) => layers.map(layer => new Promise(ok => { const im = new Image(); im.onload = () => { images[`bg_${art}_${layer}`] = im; ok(true); }; im.onerror = () => ok(false); im.src = backdropUrl(art, layer); }))));
 let seed = 7391; const rand = () => { seed = seed * 16807 % 2147483647; return (seed - 1) / 2147483646; };
 const clamp = (x, a, b) => Math.max(a, Math.min(b, x)), lerp = (a, b, t) => a + (b - a) * t, approach = (a, b, d) => a < b ? Math.min(a + d, b) : Math.max(a - d, b),
@@ -1054,7 +1056,9 @@ function pause() { G.mode = 'pause'; audio.running = false; clearInput(); screen
 function resume() { G.mode = 'play'; audio.running = true; clearInput(); last = performance.now(); accum = 0; screen(null); }
 function showDialogue(lines, f) { G.mode = 'dialogue'; G.dialogue = { lines, index: 0 }; G.afterDialogue = f; clearInput(); screen('dialogue-screen'); refreshDialogue(); }
 const FACES = { DRYDOCK: 'warden', REFUND: 'carnival', ADA: 'buoy', SLICK: 'eel', ARCHIVIST: 'guard', BARKER: 'puffer' };
-const portraitFor = who => CLAX_ASSETS[who === 'CLAX' ? 'clax_front' : FACES[who] || 'portrait'];
+const BOSS_FACE = { DRYDOCK: 'drydock', REFUND: 'refund', SLICK: 'slick', ARCHIVIST: 'archivist' };
+const faceImage = who => images['boss_' + BOSS_FACE[who]] || images[FACES[who] || 'portrait'];
+const portraitFor = who => who === 'CLAX' ? CLAX_ASSETS.clax_front : images['boss_' + BOSS_FACE[who]]?.src || CLAX_ASSETS[FACES[who] || 'portrait'];
 function refreshDialogue() { const [who, line] = G.dialogue.lines[G.dialogue.index]; $('#speaker').textContent = who; $('#dialogue-text').textContent = line; $('#dialogue-count').textContent = `${G.dialogue.index + 1} / ${G.dialogue.lines.length}`; $('#dialogue-portrait').src = portraitFor(who); }
 function nextDialogue() { if (G.mode !== 'dialogue') return; audio.init(); if (++G.dialogue.index >= G.dialogue.lines.length) { const f = G.afterDialogue; G.dialogue = null; G.afterDialogue = null; clearInput(); screen(null); f?.(); } else refreshDialogue(); }
 function skipDialogue() { if (G.mode === 'dialogue') { G.dialogue.index = G.dialogue.lines.length - 1; nextDialogue(); } }
@@ -1706,10 +1710,11 @@ function enemyWarp(e, type, t, m) {
 }
 const LAMPS = { buoy: [.5, .04, '#ffc35a'], warden: [.6, .04, '#ff5a4a'], guard: [.62, .12, '#ffb648'], torpedo: [.5, .06, '#ffc35a'] };
 function enemy(e, a = 1) {
-  const boss = e === G.level.boss, type = boss ? e.sprite : e.type, im = images[type]; if (!im) return;
+  const boss = e === G.level.boss, type = boss ? e.sprite : e.type, painted = boss && images['boss_' + e.art], im = painted || images[type]; if (!im) return;
+  const dw = painted ? e.h * im.width / im.height : e.w;   // draw width; painted art keeps its proportions
   if (e.dead) {
     const d = e.death || 0;
-    if (boss) { if (d > 1.3) return; const k = d / 1.3; ctx.save(); ctx.globalAlpha = 1 - k * k; ctx.translate(e.x + Math.sin(d * 70) * 7 * (1 - k), e.y + k * 26); ctx.rotate((e.deathDir || 1) * k * .3); ctx.scale((e.dir < 0 ? -1 : 1) * (1 + k * .12), 1 - k * .22); if (Math.sin(d * 40) > 0) ctx.filter = 'brightness(1.8) saturate(.5)'; ctx.drawImage(im, -e.w / 2, -e.h, e.w, e.h); ctx.restore(); return; }
+    if (boss) { if (d > 1.3) return; const k = d / 1.3; ctx.save(); ctx.globalAlpha = 1 - k * k; ctx.translate(e.x + Math.sin(d * 70) * 7 * (1 - k), e.y + k * 26); ctx.rotate((e.deathDir || 1) * k * .3); ctx.scale((e.dir < 0 ? -1 : 1) * (1 + k * .12), 1 - k * .22); if (Math.sin(d * 40) > 0) ctx.filter = 'brightness(1.8) saturate(.5)'; ctx.drawImage(im, -dw / 2, -e.h, dw, e.h); ctx.restore(); return; }
     if (d > .6) return; ctx.save(); ctx.globalAlpha = Math.max(0, 1 - d / .6); ctx.translate(e.x + (e.deathDir || 1) * d * 260, e.y - e.h * .5 - d * 330 + d * d * 900); ctx.rotate(d * 9 * (e.deathDir || 1)); ctx.scale(1 + d * .3, 1 - d * .3); image(e.type, -e.w * .5, -e.h * .5, e.w, e.h, e.dir < 0); ctx.restore(); return;
   }
   if (boss && !e.active && Math.abs(e.x - G.camera.x - W / 2) > W) return;
@@ -1733,8 +1738,8 @@ function enemy(e, a = 1) {
   let turn = Math.cos(clamp((e.turn || 0) / .22, 0, 1) * Math.PI); if (Math.abs(turn) < .14) turn = turn < 0 ? -.14 : .14;
   ctx.rotate(rot); ctx.scale(sx, sy); ctx.save(); ctx.translate(ox, bob); ctx.scale(facing * turn, 1);
   if (e.hit > 0) ctx.filter = 'brightness(1.7) saturate(.6)';
-  const f = enemyWarp(e, type, t, m); if (f) warpSprite(im, w, h, f, boss ? 22 : 16); else ctx.drawImage(im, -w / 2, -h, w, h); ctx.filter = 'none';
-  const lamp = LAMPS[type]; if (lamp) glow((lamp[0] - .5) * w, -h * (1 - lamp[1]), w * (boss ? .35 : .5), lamp[2], .2 + .16 * Math.sin(t * 6 + (e.phase || 0)) + tk * .3);
+  const f = enemyWarp(e, type, t, m); if (f) warpSprite(im, dw, h, f, boss ? 22 : 16); else ctx.drawImage(im, -dw / 2, -h, dw, h); ctx.filter = 'none';
+  const lamp = !painted && LAMPS[type]; if (lamp) glow((lamp[0] - .5) * w, -h * (1 - lamp[1]), w * (boss ? .35 : .5), lamp[2], .2 + .16 * Math.sin(t * 6 + (e.phase || 0)) + tk * .3);
   if (type === 'buoy') { ctx.fillStyle = 'rgba(255,236,190,.34)'; ctx.beginPath(); ctx.ellipse(0, -h * .958, w * .5 * (.5 + .5 * Math.abs(Math.sin(t * 31))), h * .02, 0, 0, Math.PI * 2); ctx.fill(); if (tk > 0) glow(0, -h * .62, w * .55, '#ffd24a', .55 * tk); }
   if (kind === 'turret' && fire > .5) { const k = (fire - .5) * 2; glow(w * .5, -h * .6, 60, '#ffd27a', .8 * k); ctx.fillStyle = `rgba(255,241,200,${k})`; ctx.beginPath(); for (let i = 0; i < 8; i++) { const an = i * Math.PI / 4, r = i % 2 ? 7 : 20 * k + 6; ctx.lineTo(w * .52 + Math.cos(an) * r, -h * .6 + Math.sin(an) * r); } ctx.fill(); }
   if (type === 'puffer' && fire > 0) { ctx.strokeStyle = `rgba(255,226,160,${fire * .8})`; ctx.lineWidth = 3; for (let i = 0; i < 3; i++) { ctx.beginPath(); ctx.arc(w * .42, -h * .8, 12 + (1 - fire) * 46 + i * 13, -.75, .55); ctx.stroke(); } }
@@ -1771,7 +1776,7 @@ function hud() {
   const touch = $('#touch').classList.contains('available');
   if (G.speechTimer > 0 && G.speech) {
     const sp = G.speech.speaker, col = { ADA: '#67bdb5', DOT: '#9fd38a', DRYDOCK: '#e58a52', REFUND: '#e38fd0', SLICK: '#b79be0', ARCHIVIST: '#e9b56a', BARKER: '#f0cf6a' }[sp] || '#b38c58'; ctx.font = '400 15px Arial'; const hs = G.compact ? 1.5 : 1, w = clamp(ctx.measureText(G.speech.s).width + 150, 420, Math.min(1120, 1240 / hs)), y = G.compact ? (G.toastTimer > 0 ? 330 : 250) : touch ? 486 : 640, x = (W - w) / 2; ctx.save(); ctx.translate(640, y); ctx.scale(hs, hs); ctx.translate(-640, -y); ctx.globalAlpha = Math.min(1, G.speechTimer / .25);
-    box(x, y, w, 56, 'rgba(8,28,37,.93)', col, 9, 1.5); ctx.save(); ctx.beginPath(); ctx.roundRect(x + 6, y + 6, 44, 44, 7); ctx.clip(); ctx.fillStyle = '#17353f'; ctx.fillRect(x + 6, y + 6, 44, 44); const im = images[FACES[sp] || 'portrait']; if (sp === 'DOT') { ctx.fillStyle = '#9fd38a'; ctx.beginPath(); ctx.arc(x + 28, y + 30, 13, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = '#17353f'; ctx.fillRect(x + 21, y + 26, 4, 5); ctx.fillRect(x + 31, y + 26, 4, 5); } else if (im) ctx.drawImage(im, x + 6, y + 6, 44, 44 * im.height / im.width); ctx.restore();
+    box(x, y, w, 56, 'rgba(8,28,37,.93)', col, 9, 1.5); ctx.save(); ctx.beginPath(); ctx.roundRect(x + 6, y + 6, 44, 44, 7); ctx.clip(); ctx.fillStyle = '#17353f'; ctx.fillRect(x + 6, y + 6, 44, 44); const im = faceImage(sp); if (sp === 'DOT') { ctx.fillStyle = '#9fd38a'; ctx.beginPath(); ctx.arc(x + 28, y + 30, 13, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = '#17353f'; ctx.fillRect(x + 21, y + 26, 4, 5); ctx.fillRect(x + 31, y + 26, 4, 5); } else if (im) ctx.drawImage(im, x + 6, y + 6, 44, 44 * im.height / im.width); ctx.restore();
     text(sp, x + 62, y + 21, 9, col, 'left', 900); text('“' + G.speech.s + '”', x + 62, y + 41, 15, '#f0ead1', 'left', 400); ctx.restore();
   }
 }
