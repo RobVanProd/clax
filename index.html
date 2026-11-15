@@ -479,7 +479,7 @@ const bosses = [
   { sprite: 'carnival', art: 'refund', name: 'THE REFUND DEPARTMENT', title: 'Your safety is our recurring revenue.', hp: 42, w: 286, h: 302, kind: 'refund' },
   { sprite: 'eel', art: 'slick', name: 'QUARTERMASTER SLICK', title: 'Everything here is salvage. Including you.', hp: 28, w: 186, h: 258, kind: 'looter' },
   { sprite: 'guard', art: 'archivist', name: 'THE HEAD ARCHIVIST', title: 'Your incident has been filed under "never happened".', hp: 36, w: 214, h: 258, kind: 'archivist' },
-  { sprite: 'puffer', name: 'THE HEAD BARKER', title: 'Step right up. Stay right down.', hp: 32, w: 226, h: 254, kind: 'barker', fly: true }];
+  { sprite: 'puffer', art: 'barker', name: 'THE HEAD BARKER', title: 'Step right up. Stay right down.', hp: 32, w: 226, h: 254, kind: 'barker', fly: true }];
 
 /* ------------------------------------------------------------------ level builder */
 function builder(index, cols, rows) {
@@ -1056,7 +1056,7 @@ function pause() { G.mode = 'pause'; audio.running = false; clearInput(); screen
 function resume() { G.mode = 'play'; audio.running = true; clearInput(); last = performance.now(); accum = 0; screen(null); }
 function showDialogue(lines, f) { G.mode = 'dialogue'; G.dialogue = { lines, index: 0 }; G.afterDialogue = f; clearInput(); screen('dialogue-screen'); refreshDialogue(); }
 const FACES = { DRYDOCK: 'warden', REFUND: 'carnival', ADA: 'buoy', SLICK: 'eel', ARCHIVIST: 'guard', BARKER: 'puffer' };
-const BOSS_FACE = { DRYDOCK: 'drydock', REFUND: 'refund', SLICK: 'slick', ARCHIVIST: 'archivist' };
+const BOSS_FACE = { DRYDOCK: 'drydock', REFUND: 'refund', SLICK: 'slick', ARCHIVIST: 'archivist', BARKER: 'barker' };
 const faceImage = who => images['boss_' + BOSS_FACE[who]] || images[FACES[who] || 'portrait'];
 const portraitFor = who => who === 'CLAX' ? CLAX_ASSETS.clax_front : images['boss_' + BOSS_FACE[who]]?.src || CLAX_ASSETS[FACES[who] || 'portrait'];
 function refreshDialogue() { const [who, line] = G.dialogue.lines[G.dialogue.index]; $('#speaker').textContent = who; $('#dialogue-text').textContent = line; $('#dialogue-count').textContent = `${G.dialogue.index + 1} / ${G.dialogue.lines.length}`; $('#dialogue-portrait').src = portraitFor(who); }
