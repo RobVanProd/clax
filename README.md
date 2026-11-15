@@ -29,6 +29,7 @@ The physics and level data inside `index.html` are pure (no DOM), so the tools l
 node tools/audit.js        # static placement: every grounded prop/enemy stands on a surface, nothing is inside terrain
 node tools/reach.js [n…]   # reachability: BFS over the real 120 Hz physics; exit, checkpoints, witnesses, items, tags
 node tools/soak.js         # runtime: headless game, every enemy watched for 20 s (needs Playwright + Chromium)
+node tools/touch.js        # phone layout: control sizes and real touch input at three phone sizes (needs Playwright)
 ```
 
 `audit.js` runs in well under a second and should gate every level edit. `reach.js` takes a few minutes per level.
