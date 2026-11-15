@@ -2,6 +2,12 @@
 
 You are producing new art for **CLAX: The Unsinkable**, a finished, playable 2D action platformer in this repository (`RobVanProd/clax`, the game is the single file `index.html`). The game plays well. Its weak point is presentation. The backdrops are low-resolution. Building interiors are flat walls. The ground textures show mirrored "kaleidoscope" blotches. Bosses reuse enlarged regular enemies. And the 18 rescuable witnesses, the checkpoints and the exit hatch are simple code-drawn shapes. Your job is to make the images that fix that.
 
+> **Hard requirement: paint, don't draw with code.** Every image must be made with an **image-generation model** (or painted by hand) to match `art/reference/characters/clax_front.png`. **Do not build images from code**: no SVG, canvas, PIL or numpy shapes, no procedural noise, no polygon fills with scratch lines.
+>
+> Batch 1 (PR #4) was built that way and was rejected for the game. It got the technical side right: sizes, tiling, alpha, muted values and the right subjects. But in the game, flat vector shapes sit behind hand-painted characters and look like a different, cheaper game. The yard backdrop had about 4,600 distinct colours in 3 million pixels; the painted one it would replace has about 185,000 at a quarter of the size.
+>
+> **If you do not have an image-generation tool, stop and say so** in your PR or reply instead of substituting. The fallback is §9: hand the per-image prompts to an image model directly.
+
 **You make images only.** Do not edit `index.html` or any code. Claude (a separate agent) will optimise your masters and wire them into the game. Deliver to `art/codex/` on a branch of your own, as described in §8.
 
 Read §1–§3 before generating anything. §4–§6 are the asset lists in priority order. §7 is the acceptance checklist every image must pass.
@@ -247,6 +253,7 @@ Same canvas size and baseline as the reference.
 - [ ] Textures: seamless with no mirroring, a 3×3 tile test included, the repeat not obvious.
 - [ ] Multi-pose sets: identical design across poses. Existing designs (Clax, the 9 enemies) unchanged.
 - [ ] Original designs, no franchise look-alikes.
+- [ ] **Painted by an image model or by hand, not drawn with code.** Painterly texture, varied edges, real lighting. Flat polygon fills are an automatic reject.
 
 ---
 
@@ -279,4 +286,33 @@ Same canvas size and baseline as the reference.
   5. Props 5A and arenas 5B.
   6. Enemy poses 5C and key art 5D.
   7. Tier 3.
-- If something in this brief is impossible with your tools (for example, true 3:1 output), do the closest thing, say exactly what you did in `notes`, and keep going.
+- If something in this brief is impossible with your tools (for example, true 3:1 output), do the closest thing, say exactly what you did in `notes`, and keep going. The one exception is the hard requirement at the top: **never substitute code-drawn art for painted art.**
+
+---
+
+## 9. Using an image model directly (fallback, or for a human operator)
+
+Most image models output about 1536×1024 at most. For a backdrop:
+
+1. Generate the centre at the model's widest landscape size, with `art/reference/characters/clax_front.png` and the matching `art/reference/backgrounds_current/*.png` attached as style references.
+2. Extend it left and right with the model's outpainting or "expand" feature until it is 3:1. Make the far right edge continue into the far left edge, so the image tiles.
+3. Upscale it to at least 3072×1024 with a line-preserving upscaler.
+4. Run the 3×1 tile test.
+
+Prompt template. This one is for `yard_far`; for another level, swap in that level's row of the §4A table:
+
+```
+Wide horizontal background painting for a 2D side-scrolling platformer, to sit BEHIND gameplay.
+Hand-painted 1990s cartoon style matching the attached character art: confident dark ink outlines,
+cel shading with painterly texture, chipped paint, rust streaks and grime, soft light from the upper left.
+Subject: a sunken salvage yard underwater at morning. Leaning harbour cranes, heaps of scrapped lifeboats,
+the hull of a large evacuation ship that never sailed, cracked glass habitat domes, hanging chains, kelp
+and algae, god-rays from the surface, drifting bubbles.
+Palette: deep teal #092a38 to #29717a, rust-orange accents, sickly algae green.
+It must RECEDE: compressed values toward the teal fog colour, lower contrast and saturation than a foreground
+character, darker and murkier in the bottom third, landmarks in the upper third, no single big focal object
+in the middle band, and no flat horizontal ledges with lit top edges (players would mistake them for platforms).
+No characters, no creatures, no text, no letters, no numbers, no logos, no signature.
+```
+
+For the transparent `mid` layer, add: *"Only the lower half contains shapes: darker silhouettes of nearer pilings, rigging and wreckage. Everything above is empty. Deliver on a plain flat background I can key out."* Then remove the background to true alpha.
